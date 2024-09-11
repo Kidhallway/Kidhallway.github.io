@@ -1,0 +1,43 @@
+* {
+    padding:0;
+    margin:0;
+}
+
+.flex-row {
+    display:flex;
+    flex-direction: row;
+}
+.flex-col {
+    display:flex;
+    flex-direction:column;
+}
+
+.header {
+    background-color: #271c3f; color: antiquewhite; justify-content: center ; padding: 2rem;
+}
+
+.content {
+    padding: 1rem; font-size: x-large;
+}
+
+.nav-panel {
+    background-color: #57486a; width:15%; font-size: x-large; color:antiquewhite; padding-top: 2rem; padding-bottom: 2rem;
+}
+.grow {
+    flex-grow:1;
+}
+.w-full {
+    width:100%;
+}
+.h-full {
+    height:100%
+}
+.w-dvw {
+    width: 100dvw;
+}
+
+.h-dvh {
+ height: 100dvh;
+} 
+
+.nav-panel a:hover {background-color:#2C2344; padding-left: 1rem;}
