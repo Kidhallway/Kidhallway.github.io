@@ -1,0 +1,36 @@
+div {
+    padding: 1em;
+    max-width: 100%;
+  }
+  .container {
+    height: 800px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  p {
+    display: flex;
+    justify-content: center;
+  }
+  * {
+    margin: 0;
+    }
+
+@font-face {
+    font-family: 'alarm';
+    src: url(alarmclock.ttf)
+
+}
+@font-face {
+  font-family: 'chimp';
+  src: url(VCR_OSD_MONO_1.001.ttf)
+
+}
+.flex-row {
+  display:flex;
+  flex-direction: row;
+}
+.flex-col {
+  display:flex;
+  flex-direction:column;
+}
