@@ -34,19 +34,19 @@
                   </div>
                 </div>
                 <div style="width: 175Px; font-size: 25px;">
-                    <div id="chimp5" style="width:300px;  border: solid 3px; background-color:#1c3810;justify-content: center; border-color: #696969;">
+                    <div id="Chimp5" style="width:300px; border: solid 3px; background-color:#1c3810;justify-content: center; border-color: #696969;">
                     <p>UNLIKELY</p>
                     </div>
-                    <div id="chimp4" style="width:300px;  border: solid 3px; background-color:#3a3402;justify-content: center; border-color: #696969;">
+                    <div id="Chimp4" style="width:300px; border: solid 3px; background-color:#3a3402;justify-content: center; border-color: #696969;">
                     <p>PLAUSABLE</p>
                     </div>             
-                    <div id="chimp3" style="width:300px; border: solid 3px; background-color:#5b2406;justify-content: center; border-color: #696969;">
+                    <div id="Chimp3" style="width:300px; border: solid 3px; background-color:#5b2406;justify-content: center; border-color: #696969;">
                     <p>PROBABLE</p>
                     </div>
-                    <div id="chimp2" style="width:300px; border: solid 3px; background-color:#53100a;justify-content: center; border-color: #696969;">
+                    <div id="Chimp2" style="width:300px; border: solid 3px; background-color:#53100a;justify-content: center; border-color: #696969;">
                     <p>IMMINENT</p>
                     </div>            
-                    <div id="chimp1" style="width:300px;  border: solid 3px; background-color:#280201;justify-content: center; border-color: #696969;">
+                    <div id="Chimp1" style="width:300px; border: solid 3px; background-color:#280201;justify-content: center; border-color: #696969;">
                     <p>IN PROGRESS</p>
                 </div>
             </div>
@@ -58,28 +58,34 @@
         </div>
       </div>
       <script>
-        document.getElementByID ;"X"
-        If (X === 5) ;{
-            p.style.border-color;="white"
-            p.style.border-color;="white"
-            
-        }
-        If (X === 4) ;{
-            a.style.border-color;="white"
-            p.style.border-color;="white"
-        }
-        If (X === 3) ;{
-            a.style.border-color;="white"
-            p.style.border-color;="white"
-        }
-        If (X === 2) ;{
-            a.style.border-color;="white"
-            p.style.border-color;="white"
-        }
-        If (X === 1) ;{
-            a.style.border-color;="white"
-            p.style.border-color;="white"
-        }
+        function detect(a, b) {
+    return Math.floor(Math.random() * (b - a + 1)) + a
+}
 
-      </script>
+detect ();
+let X = detect (1, 5)
+console.log (X)
+
+if (X === 5) {
+    document.getElementById("chimp5").style.backgroundColor="lightGreen"
+    document.getElementById("Chimp5").style.backgroundColor="lightGreen"
+}
+if (X === 4) {
+    document.getElementById("chimp4").style.backgroundColor="yellow"
+    document.getElementById("Chimp4").style.backgroundColor="yellow"
+}
+if (X === 3) {
+    document.getElementById("chimp3").style.backgroundColor="orange"
+    document.getElementById("Chimp3").style.backgroundColor="orange"
+}
+if (X === 2) {
+    document.getElementById("chimp2").style.backgroundColor="orangered"
+    document.getElementById("Chimp2").style.backgroundColor="orangered"
+}
+if (X === 1) {
+    document.getElementById("chimp1").style.backgroundColor="crimson"
+    document.getElementById("Chimp1").style.backgroundColor="crimson"
+}
+
+       </script>
 </body>
