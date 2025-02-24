@@ -290,7 +290,8 @@
         let leave = choiceIncludesAny(text, "no", "cross")
 
         if(!negate && enter) {
-          print(StoryText(`As you put a check next to the one name, you feel proud of your country and proud of your leader. You should be neither of these things. Game over.`))
+          print(StoryText(`한 이름 옆에 체크 표시를 하면 나라에 대한 자부심과 지도자에 대한 자부심을 느낄 수 있습니다. 당신은 이 중 어느 쪽도 아니어야 합니다. 게임이 끝났습니다. || As you put a check next to the one name, you feel proud of your country and proud of your leader. You should be neither of these things. Game over.`))
+          setScene(new SceneEnd())
         } else if((negate && enter) || (!negate && leave)){
           print(StoryText(`그의 이름을 지우면 최고 지도자에게 반대표를 던진 사람들을 위해 만들어진 특별실로 향합니다. 당신은 즉시 총살당합니다. || As you cross his name out, you head into the specialized room made for people who vote against the supreme leader. You immediately get gunned down`))
           setScene(new SceneEnd())
