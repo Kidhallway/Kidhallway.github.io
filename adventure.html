@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <title>Vote Today!</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>North Korean Voting Simulator</h1>
+      <div id="history" class="history"></div>
+      <div class="controls">
+        <input type="text" id="user-input" class="user-input">
+        <button id="user-action" class="user-action">
+          <i data-lucide="send-horizontal"></i>
+        </button>
+      </div>
+    </div>
+  </body>
+  <style>
+
+    :root {
+      --theme-foreground      : ivory;
+      --theme-user-background : steelblue;
+      --theme-user-foreground : ghostwhite;
+      --theme-story-background: lavender;
+      --theme-story-foreground: rebeccapurple;
+
+      color           : var(--theme-foreground);
+      background-color: var(--theme-background);
+    }
+
+    body {
+      inset: 0;
+      margin: 0;
+      padding: 0;
+      background-image: url("https://platform.vox.com/wp-content/uploads/sites/2/chorus/uploads/chorus_asset/file/15644508/GettyImages-120401427.0.0.1492208786.jpg?quality=90&strip=all&crop=0%2C2.8601292284303%2C100%2C94.279741543139&w=828");
+      background-size: cover;
+      height: 100dvh;
+      width: 100dvw;
+
+    }
+
+    .container {
+      width  : 100dvw;
+      height : 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+    }
+
+    .history {
+      display: flex;
+      flex-direction: column;
+      width : 768px;
+      height: 384px;
+      padding: 4px;
+      gap    : 4px;
+      overflow-x: hidden;
+    }
+
+    .controls {
+      width  : 768px;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .user-input {
+      flex-grow: 1;
+      font-size: 20px;
+      font-family: monospace;
+      color: var(--theme-foreground);
+      background: var(--theme-background);
+    }
+
+    .user-action {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      font-size: 20px;
+      font-family: monospace;
+      color: var(--theme-foreground);
+      background: var(--theme-background);
+    }
+
+    .user-text {
+      color     : var(--theme-user-foreground);
+      background: var(--theme-user-background);
+      text-align: right;
+      align-self: end;
+      font-size: 20px;
+      font-family: monospace;
+      padding: 8px;
+      /* border-radius: 10px; */
+    }
+
+    .story-text {
+      color     : var(--theme-story-foreground);
+      background: var(--theme-story-background);
+      align-self: start;
+      font-size: 20px;
+      font-family: monospace;
+      padding: 8px;
+    }
+
+    .system-text {
+      text-align: center;
+      align-self: center;
+      font-size: 20px;
+      font-family: sans-serif;
+      font-style: italic;
+      padding: 8px;
+    }
+  </style>
+
+  <script>
+    lucide.createIcons()
+
+    const history    = document.getElementById("history")
+    const userInput  = document.getElementById("user-input")
+    const userAction = document.getElementById("user-action")
+
+    let SCENE = null
+    let playerName  = ""
+    let playerItems = [ ]
+
+    function UserText(text) {
+      const div = document.createElement("div")
+      div.classList.add("user-text")
+      div.innerText = text
+      return div
+    }
+
+    function StoryText(text) {
+      const div = document.createElement("div")
+      div.classList.add("story-text")
+      div.innerText = text
+      return div
+    }
+
+    function SystemText(text) {
+      const div = document.createElement("div")
+      div.classList.add("system-text")
+      div.innerText = text
+      return div
+    }
+
+    function print(text, ms=0) {
+      setTimeout(() => {
+        history.appendChild(text)
+        history.scrollTop = history.scrollHeight
+      }, ms)      
+    }
+
+    function setScene(scene) {
+      if(SCENE && SCENE.onLeave) {
+        SCENE.onLeave()
+      }
+      SCENE = scene
+      if(SCENE && SCENE.onEnter) {
+        SCENE.onEnter()
+      }
+    }
+
+    function onUserInput(text) {
+      if(!text) return;
+      print(UserText(text))
+      if(SCENE && SCENE.onInput) {
+        SCENE.onInput(text)
+      }
+    }
+
+    function getUserInput(       ) {
+      return userInput.value.trim()
+    }
+
+    function setUserInput(text="") {
+      userInput.value = text
+    }
+
+    function captureUserInput() {
+      let text = getUserInput()
+                 setUserInput()
+      return text
+    }
+
+    userInput.onkeypress = function(e) {
+      if(e.key === "Enter") {
+        onUserInput(captureUserInput())
+      }
+    }
+
+    userAction.onclick = function(e) {
+      onUserInput(captureUserInput())
+    }
+
+    function choiceIncludesAny(choice, ...phrases) {
+      for(let phrase of phrases)
+        if( choice.toLowerCase().includes(phrase))
+          return true
+      return false
+    }
+
+    function choiceIncludesAll(choice, ...phrases) {
+      for(let phrase of phrases)
+        if(!choice.toLowerCase().includes(phrase))
+          return false
+      return true
+    }
+
+    function countPhrase (choice, phrase) {
+      let i = 0;
+      let n = 0;
+
+      while((i = choice.toLowerCase().indexOf(phrase, i)) >= 0) {
+        n ++
+        i ++
+      }
+
+      return n
+    }
+
+    function countPhrases(choice, ...phrases) {
+      let n = 0
+      for(let phrase of phrases)
+        n += countPhrase(choice, phrase)
+      return n
+    }
+
+    function countEqualTo(choice, n, ...phrases) {
+      return countPhrases(choice, phrases) === n
+    }
+
+    function countEven(choice, ...phrases) {
+      return countPhrases(choice, phrases) % 2 === 0
+    }
+
+    function countOdd(choice, ...phrases) {
+      return countPhrases(choice, phrases) % 2 === 1
+    }
+
+    function countLessThan(choice, n, ...phrases) {
+      return countPhrases(choice, phrases) < n
+    }
+
+    function countMoreThan(choice, n, ...phrases) {
+      return countPhrases(choice, phrases) > n
+    }
+
+    function countLessThanOrEqualTo(choice, n, ...phrases) {
+      return countPhrases(choice, phrases) <= n
+    }
+
+    function countMoreThanOrEqualTo(choice, n, ...phrases) {
+      return countPhrases(choice, phrases) >= n
+    }
+
+    class Scene {
+      onEnter() { }
+      onLeave() { }
+      onInput(text) { }
+    }
+
+    class SceneStart extends Scene {
+      onEnter() {
+        print(SystemText(`Welcome to North Korea Voting Simulator!! It is your duty to vote for a new supreme leader.`))
+        print(StoryText(`투표소에 들어가면 종이 한 장이 보입니다. 잠재적인 후보자가 여기에 나열되어 있습니다. “김정은”. 놀랍게도 유일한 후보는 현재 최고 지도자입니다. || As you walk into the the ballot room, you see a single sheet of paper. On it reads the potential candidates. "Kim Jong Un". As nobody is suprised, the only canidate is the current supreme leader`))
+        print(StoryText(`당신의 이름을 쓰세요 || Write your name`))
+      }
+
+      onLeave() {
+        print(StoryText(`안녕하세요 ${playerName.toUpperCase()}! || WELCOME ${playerName.toUpperCase()}!`))
+      }
+
+      onInput(text) {
+        playerName = text
+        setScene(new SceneDoor())
+      }
+    }
+
+    class SceneDoor extends Scene {
+      onEnter() {
+        print(StoryText(`이름을 쓰면서 잠재적 후보자에 대해 생각해 봅니다. 그에게 투표하시겠습니까? 아니면 그의 이름을 지웠나요? || As you write your name, you ponder the potential candidate. Do you vote him in? or do you cross his name out.`))
+      }
+
+      onInput(text) {
+        let negate = countOdd(text, "not", "dont", "don't", "didnt", "didn't", "never")
+        let enter = choiceIncludesAny(text, "yes", "vote")
+        let leave = choiceIncludesAny(text, "no", "cross")
+
+        if(!negate && enter) {
+          print(StoryText(`As you put a check next to the one name, you feel proud of your country and proud of your leader. You should be neither of these things. Game over.`))
+        } else if((negate && enter) || (!negate && leave)){
+          print(StoryText(`그의 이름을 지우면 최고 지도자에게 반대표를 던진 사람들을 위해 만들어진 특별실로 향합니다. 당신은 즉시 총살당합니다. || As you cross his name out, you head into the specialized room made for people who vote against the supreme leader. You immediately get gunned down`))
+          setScene(new SceneEnd())
+        } else {
+          print(SystemText(`모르겠습니다 "${text}" 다시 시도해 주세요! || I dont know "${text}" Please try again`))
+        }
+      }
+    }
+
+    class SceneAirlock {
+
+    }
+
+    class SceneEnd {
+      onEnter() {
+        print(StoryText(`The End`))
+      }
+
+      onInput(text) {
+        print(SystemText(`The story has ended and you may not advance further. Refresh the page to try again.`))
+      }
+    }
+
+    setScene(new SceneStart())
+
+  </script>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+    <title>
+        Video game
+    </title>
+    <body>        
+        <canvas id="canvas">
+        <script>
+
+        const canvas = document.getElementById("canvas")     
+        canvas.style.position   = "absolute"     
+        canvas.style.top        = "0px"
+        canvas.style.left       = "0px"
+        canvas.style.width      = "100dvw"
+        canvas.style.height     = "100dvh"
+        canvas.style.background = "black"
+
+        /** @type {CanvasRenderingContext2D} */
+        const context = canvas.getContext("2d")
+
+        const cellW = 32
+        const cellH = 32
+        const gridW = 100
+        const gridH = 16
+        const grid  = []
+
+        let offsetX = (canvas.getBoundingClientRect().width - gridW* cellW)/2
+        let offsetY = (canvas.getBoundingClientRect().height - gridH* cellH)/2
+
+    class Player {
+        constructor() {
+        this.x = 0
+        this.y = 0
+        }
+
+        draw() {
+            context.fillStyle = "LimeGreen"
+            context.fillRect(
+                this.x * cellW,
+                this.y * cellH,
+                cellW,
+                cellH
+            )
+        }
+    }
+
+    class Wall {
+        constructor(x=0, y=0){
+            this.x = x
+            this.y = y 
+        }
+
+        draw() {
+            context.fillStyle = "white"
+            context.fillRect(
+                this.x * cellW,
+                this.y * cellH,
+                cellW,
+                cellH
+            )
+        }
+    }
+
+let player = new Player()
+
+document.onmousemove = (e) => {
+    if (e.buttons > 0) {
+    offsetX+= e.movementX
+    offsetY+= e.movementY
+    }
+}
+
+document.onkeydown = (e) => {
+    if(e.key === "ArrowUp") {
+        moveUp()
+        console.log ("up")
+    } else if(e.key === "ArrowDown") {
+       moveDown()
+    } else if(e.key === "ArrowRight") {
+        moveRight()
+    } else if(e.key === "ArrowLeft") {
+        moveLeft()
+    }
+}
+
+document.onkeydown = (f) => {
+    if(f.key === "w") {
+        console.log (f)
+    } else if(f.key === "a") {
+        console.log (f)
+    } else if(f.key === "s") {
+        console.log (f)
+    } else if(f.key === "d") {
+        console.log (f)
+    }
+}
+
+for(let j = 0; j < gridH; j ++)
+for(let i = 0; i < gridW; i ++)    
+        if(Math.random() < .25)
+        grid.push(new Wall(i,j))
+    else
+        grid.push(undefined)
+
+grid[at(0,0)] = player
+
+function moveUp() {
+    if(inBounds(player.x, player.y -1) && !getGridAt(player.x, player.y -1)){
+        grid[at(player.x, player.y)] = undefined
+        player.y -=1
+        grid[at(player.x, player.y)] = player
+    } 
+}
+function moveLeft() {
+    if(inBounds(player.x -1, player.y) && !getGridAt(player.x -1, player.y)){
+        grid[at(player.x, player.y)] = undefined
+        player.x -=1
+        grid[at(player.x, player.y)] = player
+    }
+}
+function moveRight() {
+    if(inBounds(player.x +1, player.y) && !getGridAt(player.x +1, player.y)){
+        grid[at(player.x, player.y)] = undefined
+        player.x +=1
+        grid[at(player.x, player.y)] = player
+    }
+}
+function moveDown() {
+    if(inBounds(player.x, player.y +1) && !getGridAt(player.x, player.y +1)){
+        grid[at(player.x, player.y)] = undefined
+        player.y +=1
+        grid[at(player.x, player.y)] = player
+    }
+}
+
+            function clamp(x, a, b) {
+                return Math.min(Math.max(x, a), b)
+            }
+            function at(i,j) {
+                return j * gridW + i
+            }
+
+            function inBounds(i,j){
+                return (
+                    i >= 0 && i <gridW &&
+                    j>= 0 && j < gridH
+                )
+
+            }
+            function getGridAt(i,j){
+             return inBounds(i, j) ? grid[at(i,j)] : undefined     
+            }
+
+            function setGridAt(i,j, what){
+                if(inBounds(i,j)) grid[at(i,j)] = what
+            }
+
+            function drawGrid() {
+                for (let i = 0; i <gridW; i++)
+                    for (let j = 0; j <gridH; j++){
+                        if(grid[at(i, j)] && grid[at(i,j)].draw)
+                            grid[at(i,j)].draw()
+                    }
+
+            }
+
+
+        new ResizeObserver (onResize).observe(canvas)
+
+        function onResize () {
+            canvas.width  = canvas.getBoundingClientRect().width
+            canvas.height = canvas.getBoundingClientRect().height
+        }
+
+            function update (t,dt) {
+            }
+
+            function render (t, dt) {
+                context.resetTransform()
+                context.clearRect(0,0,canvas.width,canvas.height)
+                context.translate(
+                    offsetX,
+                    offsetY
+                
+                )
+                drawGrid ()
+                
+            }
+
+            function animate (t0, t1, t2) {
+                const
+                t = (t2 - t0)  / 1000,
+                dt = (t2 - t1) / 1000;
+
+                update(t,dt)
+                render(t, dt)
+                requestAnimationFrame (t3 => animate(t0, t2, t3))
+            }
+
+    requestAnimationFrame(
+        t0 => requestAnimationFrame(
+            t1 => requestAnimationFrame(
+                t2 => animate(t0,t1,t2))))
+
+        </script>
+
+        </canvas>
+    </body>
+</html>
