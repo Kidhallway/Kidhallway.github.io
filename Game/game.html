@@ -19,15 +19,36 @@
         /** @type {CanvasRenderingContext2D} */
         const context = canvas.getContext("2d")
 
+
+        
 const cellW = 32
 const cellH = 32
 const gridW = 17
 const gridH = 17
 const grid  = []
+let lastUpdate = 0
 
 let offsetX = (canvas.getBoundingClientRect().width - gridW* cellW)/2
 let offsetY = (canvas.getBoundingClientRect().height - gridH* cellH)/2
 let lastDirection = "right"
+
+function loadImage(url) {
+    return new Promise((resolve, reject) => {
+        const image   = new Image()
+        image.onload  = () => resolve (image)
+        image.onerror = () => reject  (     )
+        image.src = url
+    })
+    
+}
+
+async function loadImages(...urls) {
+    return Promise.all(urls.map(loadImage))
+}
+
+let VASE_SPRITE
+let FLOOR_SPRITE
+let SPRITE_ATLAS
 
 class Player {
     constructor() {
@@ -38,7 +59,9 @@ class Player {
 
     draw() {
         context.fillStyle = "LimeGreen"
-        context.fillRect(
+        context.drawImage(
+            SPRITE_ATLAS,
+            16, 64, 16, 16,
             this.x * cellW,
             this.y * cellH,
             cellW,
@@ -55,12 +78,15 @@ class Wall {
     }
 
     draw() {
-        context.fillStyle = "white"
-        context.fillRect(
-            this.x * cellW,
-            this.y * cellH,
-            cellW,
-            cellH
+        let mask = getWallMask(this.x, this.y)
+        let i = Math.floor(mask % 4)
+        let j = Math.floor(mask / 4)
+        context.drawImage(SPRITE_ATLAS,
+        16 + i * 16, j * 16, 16, 16,
+        this.x * cellW,
+        this.y * cellH,
+        cellW,
+        cellH
         )
     }
     
@@ -73,8 +99,9 @@ class Vase {
     }
 
     draw() {
-        context.fillStyle = "yellow"
-        context.fillRect(
+        context.drawImage(
+            SPRITE_ATLAS,
+            0, 32, 16, 16,
             this.x * cellW,
             this.y * cellH,
             cellW,
@@ -88,11 +115,14 @@ class Enemy {
     constructor(x=0, y=0){
         this.x = x
         this.y = y 
+        this.updateId = 0
     }
 
     draw() {
         context.fillStyle = "red"
-        context.fillRect(
+        context.drawImage(
+            SPRITE_ATLAS,
+            0, 64, 16, 16,
             this.x * cellW,
             this.y * cellH,
             cellW,
@@ -100,19 +130,46 @@ class Enemy {
         )
     }
     update() {
-        let north = inBounds(this.x, this.y -1) ? player.field[at(this.x, this.y - 1)] : undefined
-        let east = inBounds(this.x, this.y -1) ? player.field[at(this.x, this.y - 1)] : undefined
-        let south = inBounds(this.x, this.y -1) ? player.field[at(this.x, this.y - 1)] : undefined
-        let west = inBounds(this.x, this.y -1) ? player.field[at(this.x, this.y - 1)] : undefined
+        if (player.field[at(this.x, this.y)] === 0) return
+        let north = inBounds(this.x, this.y -1) && (!getGridAt(this.x, this.y -1) || getGridAt(this.x, this.y -1) == player) ? player.field[at(this.x, this.y - 1)] : undefined
+        let west  = inBounds(this.x -1, this.y) && (!getGridAt(this.x -1, this.y) || getGridAt(this.x -1, this.y) == player) ? player.field[at(this.x - 1, this.y)] : undefined
+        let south = inBounds(this.x, this.y +1) && (!getGridAt(this.x, this.y +1) || getGridAt(this.x, this.y +1) == player) ? player.field[at(this.x, this.y + 1)] : undefined
+        let east  = inBounds(this.x +1, this.y) && (!getGridAt(this.x +1, this.y) || getGridAt(this.x +1, this.y) == player) ? player.field[at(this.x + 1, this.y)] : undefined
+
+        let minDistance = min(north, min(west, min(south, east)))
+
+        if (minDistance == 0) {
+            console.log("game over")
+        }
+        if (minDistance === undefined) {
+            console.log("nowhere to go!")
+            return
+        } else if(minDistance === north){
+            grid[at(this.x, this.y)] = undefined
+            this.y -= 1
+            grid[at(this.x, this.y)] = this
+        }else if(minDistance === west){
+            grid[at(this.x, this.y)] = undefined
+            this.x -= 1
+            grid[at(this.x, this.y)] = this
+        }else if(minDistance === south){
+            grid[at(this.x, this.y)] = undefined
+            this.y += 1
+            grid[at(this.x, this.y)] = this
+        }else if(minDistance === east){
+            grid[at(this.x, this.y)] = undefined
+            this.x += 1
+            grid[at(this.x, this.y)] = this
+        }
     }
 }
 
 function min(a, b) {
     if(a !== undefined && b !== undefined) {
         return a <= b ? a : b
-    } else  if(a !== undefined && b !== undefined) {
+    } else  if(a === undefined && b !== undefined) {
         return b
-    } else  if(a !== undefined && b !== undefined) {
+    } else  if(a !== undefined && b === undefined) {
         return a 
     } else {
         return undefined
@@ -129,53 +186,46 @@ function getDistanceField(x, y) {
     queue.push(at(x, y))
 
     while(queue.length > 0) {
-        let i = Math.floor (queue % gridW)
-        let j = Math.floor (queue / gridW)
+        visited.add(queue[0])
+        let i = Math.floor (queue[0] % gridW)
+        let j = Math.floor (queue[0] / gridW)
         queue.shift()
         
         let distance = field[at(i, j)]
 
-        if(inBounds(i, j -1)  && !getGridAt(i, j -1)) {
+        if(inBounds(i, j - 1)  && !getGridAt(i, j - 1)) {
             field[at(i, j - 1)] = min(field[at(i, j - 1)], distance + 1)
-            if(!visited.has(at(i, j - 1)) && !queue.includes(at(i, j - 1))){ 
-            queue.push(at(i - 1, j))
+            if(!visited.has(at(i, j - 1)) && !queue.includes(at(i, j - 1))){
+                queue.push(at(i, j - 1))
             }
-        if(inBounds(i -1, j)  && !getGridAt(i -1, j)) {
-            field[at(i - 1, j)] = min(field[at(i - 1, j)], distance + 1)
-            if(!visited.has(at(i - 1, j)) && !queue.includes(at(i - 1, j))){ 
-            queue.push(at(i - 1, j))
-            }
-            
         }
-        if(inBounds(i, j +1)  && !getGridAt(i, j +1)) {
+
+        if(inBounds(i - 1, j)  && !getGridAt(i - 1, j)) {
+            field[at(i - 1, j)] = min(field[at(i - 1, j)], distance + 1)
+            if(!visited.has(at(i - 1, j)) && !queue.includes(at(i - 1, j))) { 
+                queue.push(at(i - 1, j))
+            }            
+        }
+
+        if(inBounds(i, j + 1)  && !getGridAt(i, j + 1)) {
             field[at(i, j + 1)] = min(field[at(i, j + 1)], distance + 1)
-            if(!visited.has(at(i, j + 1)) && !queue.includes(at(i, j + 1))){ 
-            queue.push(at(i + 1, j))
+            if(!visited.has(at(i, j + 1)) && !queue.includes(at(i, j + 1))) { 
+                queue.push(at(i, j + 1))
             }
+        }
+
         if(inBounds(i +1, j)  && !getGridAt(i +1, j)) {
             field[at(i + 1, j)] = min(field[at(i + 1, j)], distance + 1)
-            if(!visited.has(at(i + 1, j)) && !queue.includes(at(i + 1, j))){ 
-            queue.push(at(i + 1, j))
-            }
-            
-        }
+            if(!visited.has(at(i + 1, j)) && !queue.includes(at(i + 1, j))) { 
+                queue.push(at(i + 1, j))
+            }            
         }
     }
 
-
-        if(inBounds(i, j - 1) && !visited.has(at(i, j - 1)) && !getGridAt(i, j - 1)) queue.push(at(i, j - 1))
-        if(inBounds(i - 1, j) && !visited.has(at(i - 1, j)) && !getGridAt(i - 1, j)) queue.push(at(i - 1, j))
-        if(inBounds(i, j - 1) && !visited.has(at(i, j - 1)) && !getGridAt(i, j - 1)) queue.push(at(i, j - 1))
-        if(inBounds(i - 1, j) && !visited.has(at(i - 1, j)) && !getGridAt(i - 1, j)) queue.push(at(i - 1, j))
-
-        visited.add(at(i, j))
-
-        
-        let north = getGridAt(i, j -1)
-       
-
-    }
+    return field
 }
+
+
 
 let player = new Player()
 
@@ -237,13 +287,14 @@ for(let i = 0; i < gridW; i ++)
 
 grid[at(0,0)] = player
 
+
+
 function moveUp() {
     if(inBounds(player.x, player.y -1) && !getGridAt(player.x, player.y -1)){
         grid[at(player.x, player.y)] = undefined
-        player.y -=.5
-        grid[at(player.x, player.y)] = undefined
-        player.y -=.5
+        player.y -=1
         grid[at(player.x, player.y)] = player
+        player.field = getDistanceField(player.x, player.y)
     } 
 }
 function moveLeft() {
@@ -251,6 +302,7 @@ function moveLeft() {
         grid[at(player.x, player.y)] = undefined
         player.x -=1
         grid[at(player.x, player.y)] = player
+        player.field = getDistanceField(player.x, player.y)
     }
 }
 function moveRight() {
@@ -258,6 +310,7 @@ function moveRight() {
         grid[at(player.x, player.y)] = undefined
         player.x +=1
         grid[at(player.x, player.y)] = player
+        player.field = getDistanceField(player.x, player.y)
     }
 }
 function moveDown() {
@@ -265,6 +318,7 @@ function moveDown() {
         grid[at(player.x, player.y)] = undefined
         player.y +=1
         grid[at(player.x, player.y)] = player
+        player.field = getDistanceField(player.x, player.y)
     }
 }
 
@@ -277,13 +331,13 @@ function moveDown() {
 
             function inBounds(i,j){
                 return (
-                    i >= 0 && i <gridW &&
-                    j>= 0 && j < gridH
+                    i >= 0 && i < gridW &&
+                    j >= 0 && j < gridH
                 )
 
             }
             function getGridAt(i,j){
-             return inBounds(i, j) ? grid[at(i,j)] : undefined     
+             return inBounds(i, j) ? grid[at(i,j)] : undefined
             }
 
             function getNeighborsAt(i,j) {
@@ -302,21 +356,65 @@ function moveDown() {
             function drawGrid() {
                 for (let i = 0; i <gridW; i++)
                     for (let j = 0; j <gridH; j++){
+                        context.drawImage(
+                            SPRITE_ATLAS,
+                            0,16,16,16,
+                            i * cellW,
+                            j * cellH,
+                            cellW,
+                            cellH
+                        )
                         if(grid[at(i, j)] && grid[at(i,j)].draw)
                             grid[at(i,j)].draw()
+                        // if(player.field[at(i, j)] !== undefined) {
+                        //     context.fillStyle = "white"
+                        //     context.fillText(
+                        //         player.field[at(i, j)],
+                        //         i * cellW + cellW /2,
+                        //         j * cellH + cellH /2
+                        //     )
+                        // }
                     }
 
             }
 
+            
+function getWallMask(x,y) {
+    let north = getGridAt(x, y-1) instanceof Wall ? 1: 0
+    let west  = getGridAt(x-1, y) instanceof Wall ? 2: 0
+    let south = getGridAt(x, y+1) instanceof Wall ? 4: 0
+    let east  = getGridAt(x+1, y) instanceof Wall ? 8: 0
+    return north | west | south | east
+}
+
+
+            let updateId = 0
+
+            function updateGrid(){
+                updateId += 1
+                for(let cell of grid)
+                if(cell && cell.update && cell.updateId !== updateId) {
+                    cell.updateId = updateId
+                    cell.update()
+                }
+            }
+
+            
 
         new ResizeObserver (onResize).observe(canvas)
 
         function onResize () {
             canvas.width  = canvas.getBoundingClientRect().width
             canvas.height = canvas.getBoundingClientRect().height
+            context.imageSmoothingEnabled = false
         }
 
             function update (t,dt) {
+                if(t - lastUpdate >= 1) {
+                    lastUpdate += 1
+                    updateGrid()
+                }
+  
             }
 
             function render (t, dt) {
@@ -330,7 +428,6 @@ function moveDown() {
                 drawGrid ()
                 
             }
-
             function animate (t0, t1, t2) {
                 const
                 t = (t2 - t0)  / 1000,
@@ -341,13 +438,22 @@ function moveDown() {
                 requestAnimationFrame (t3 => animate(t0, t2, t3))
             }
 
-    requestAnimationFrame(
+            loadImages(
+                "./vase.png",
+                "./floor.png",
+                "./sprite_atlas.png"
+            ).then(image => {
+                VASE_SPRITE   = image [0]
+                FLOOR_SPRITE  = image [1]
+                SPRITE_ATLAS  = image [2]
+            }).then(() => {
+        requestAnimationFrame(
         t0 => requestAnimationFrame(
             t1 => requestAnimationFrame(
                 t2 => animate(t0,t1,t2))))
+            })
 
         </script>
-
         </canvas>
     </body>
 </html>
