@@ -439,13 +439,9 @@ function getWallMask(x,y) {
             }
 
             loadImages(
-                "./vase.png",
-                "./floor.png",
                 "./sprite_atlas.png"
             ).then(image => {
-                VASE_SPRITE   = image [0]
-                FLOOR_SPRITE  = image [1]
-                SPRITE_ATLAS  = image [2]
+                SPRITE_ATLAS  = image [0]
             }).then(() => {
         requestAnimationFrame(
         t0 => requestAnimationFrame(
