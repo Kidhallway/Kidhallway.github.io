@@ -3,7 +3,8 @@
     <title>
         Video game
     </title>
-    <body>        
+    <body>
+        <script src=""></script>        
         <canvas id="canvas">
         <script>
 
@@ -46,8 +47,7 @@ async function loadImages(...urls) {
     return Promise.all(urls.map(loadImage))
 }
 
-let VASE_SPRITE
-let FLOOR_SPRITE
+
 let SPRITE_ATLAS
 
 class Player {
@@ -59,14 +59,44 @@ class Player {
 
     draw() {
         context.fillStyle = "LimeGreen"
-        context.drawImage(
+            if(lastDirection == "down") {
+                context.drawImage(
             SPRITE_ATLAS,
-            16, 64, 16, 16,
+            80, 0, 16, 16,
             this.x * cellW,
             this.y * cellH,
             cellW,
             cellH
-        )
+            )
+            } else if(lastDirection == "left") {
+                context.drawImage(
+            SPRITE_ATLAS,
+            96, 0, 16, 16,
+            this.x * cellW,
+            this.y * cellH,
+            cellW,
+            cellH
+            )
+            } else if(lastDirection == "right") {
+                context.drawImage(
+            SPRITE_ATLAS,
+            80, 16, 16, 16,
+            this.x * cellW,
+            this.y * cellH,
+            cellW,
+            cellH
+            )
+            } else if(lastDirection == "up") {
+                context.drawImage(
+            SPRITE_ATLAS,
+            96, 16, 16, 16,
+            this.x * cellW,
+            this.y * cellH,
+            cellW,
+            cellH
+            )
+            }
+
     }
 }
 
@@ -101,15 +131,47 @@ class Vase {
     draw() {
         context.drawImage(
             SPRITE_ATLAS,
-            0, 32, 16, 16,
+            16, 64, 16, 16,
             this.x * cellW,
             this.y * cellH,
             cellW,
             cellH
         )
     }
-    
+        interact () {
+            grid[at(this.x, this.y)] = undefined
+            grid[at(this.x, this.y)] = new Vase_broken()
+            console.log("good job dipwad")
+
+        }
+    }
+
+class Vase_broken {
+    constructor(x=0, y=0){
+        this.x = x
+        this.y = y
+    }
+
+    draw() {
+        context.drawImage(
+            SPRITE_ATLAS,
+            0, 0, 16, 16,
+            this.x * cellW,
+            this.y * cellH,
+            cellW,
+            cellH
+        )
+    }
+    interact () {
+            grid[at(this.x, this.y)] = undefined
+            grid[at(this.x, this.y)] = new Vase()
+            console.log("fixed")
+
+        }
 }
+
+    
+
 
 class Enemy {
     constructor(x=0, y=0){
@@ -161,6 +223,11 @@ class Enemy {
             this.x += 1
             grid[at(this.x, this.y)] = this
         }
+    }
+    interact() {
+        grid[at(this.x, this.y)] = undefined
+        console.log ("Killed")
+
     }
 }
 
@@ -226,8 +293,8 @@ function getDistanceField(x, y) {
 }
 
 
-
 let player = new Player()
+let vase_broken = new Vase_broken()
 
 document.onmousemove = (e) => {
     if (e.buttons > 0) {
@@ -268,6 +335,8 @@ document.onkeydown = (e) => {
             moveRight()
             moveRight()
         } 
+    } else if (e.key === "e") {
+        interact()
     }
     
 }
@@ -280,7 +349,7 @@ for(let i = 0; i < gridW; i ++)
         grid.push(new Wall(i,j))
     else if(Math.random() <= .025)
     grid.push(new Vase (i,j))
-    else if (Math.random() <= .001)
+    else if (Math.random() <= .005)
     grid.push(new Enemy (i, j))
     else
         grid.push(undefined)
@@ -320,6 +389,26 @@ function moveDown() {
         grid[at(player.x, player.y)] = player
         player.field = getDistanceField(player.x, player.y)
     }
+}
+
+function interact () {
+    if(lastDirection === "up") {
+        let cell = getGridAt(player.x, player.y - 1)
+        if(cell && cell.interact)
+            cell.interact()
+    } else if(lastDirection === "left") {
+        let cell = getGridAt(player.x - 1, player.y)
+        if(cell && cell.interact)
+            cell.interact()
+    } else if(lastDirection === "down") {
+        let cell = getGridAt(player.x, player.y + 1)
+        if(cell && cell.interact)
+            cell.interact()
+    } else if(lastDirection === "right") {
+        let cell = getGridAt(player.x + 1, player.y)
+        if(cell && cell.interact)
+            cell.interact()
+    } 
 }
 
             function clamp(x, a, b) {

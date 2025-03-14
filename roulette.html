@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <title>
+        Roulette
+    </title>
+    <body style="display: block;margin: 8px;" id="background">
+            <h1 style="font-size: 76px;line-height: 76px;height: 76px;font-family: Helvetica, sans-serif;font-weight: bold;position: fixed;top: 50%;margin-top: -38px;width: 100%;text-align: center;">
+            <button id="button" type="button">
+                Good Luck!
+            </button>
+        </h1>
+        </div>
+        <script> 
+            const btn = document.getElementById("button")
+            btn.onclick =() => {
+            console.log("hello")
+            if(Math.random() <= .25){
+                console.log("badluck")
+                document.getElementById("background").style.backgroundColor="Red"
+                setTimeout(function(){
+                document.getElementById("background").style.backgroundColor="white",
+                window.open("https://www.youtube.com/watch?v=D919h2Cri74")
+                }, 2000);
+
+            } else {
+                console.log("goodluck")
+                document.getElementById("background").style.backgroundColor="green"
+                setTimeout(function(){
+                document.getElementById("background").style.backgroundColor="white"
+                }, 2000);
+
+            }
+            }
+            </script>
+    </body>
+</html>
