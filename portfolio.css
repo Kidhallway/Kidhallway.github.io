@@ -3,20 +3,20 @@
     margin:0;
     padding:0;
 
-    --theme-primary:#D7FDEC;
+    --theme-primary:#6FEDB7;
     --theme-secondary:#A9FBD7;
     --theme-accent:#B2E4DB;
-    --theme-surface:#B0C6CE;
+    --theme-surface:#1C0B19;
   
-    --theme-primary-content:#1C0B19;
-    --theme-secondary-content:#1C0B19;
-    --theme-accent-content:#1C0B19;
-    --theme-surface-content:#1C0B19E;
+    --theme-primary-content:#140D4F;
+    --theme-secondary-content:#4EA699;
+    --theme-accent-content:#2DD881;
+    --theme-surface-content:#4EA699;
     color:var(--theme-surface-content);
 }
 
 body{
-    background:var(--theme-surface-content);
+    background:var(--theme-surface);
 }
 
 .flex-row {
@@ -62,15 +62,27 @@ h1{
 .bg-surface {
     background: var(--theme-surface)
 }
+.text-primary-content {
+    color: var(--theme-primary-content)
+}
+.text-secondary-content {
+    color: var(--theme-secondary-content)
+}
+.text-accent-content {
+    color: var(--theme-accent-content)
+}
+.text-surface-content {
+    color: var(--theme-surface-content)
+}
 .text-primary {
-    background: var(--theme-primary-content)
+    color: var(--theme-primary)
 }
 .text-secondary {
-    background: var(--theme-secondary-content)
+    color: var(--theme-secondary)
 }
 .text-accent {
-    background: var(--theme-accent-content)
+    color: var(--theme-accent)
 }
 .text-surface {
-    background: var(--theme-surface-content)
+    color: var(--theme-surface)
 }
