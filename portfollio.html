@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html><head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oi&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./portfolio.css">
     <title>Kid Hallway</title>
 </head>
 <body>
+    <link rel="stylesheet" type="text/css" href="chimpcon.css">
     <div class="flex-col justify-center align-center w-dvw h-dvh">
         <img src="NightmareVance.webp" class="pfp">
-        <h1 class="text-primary">kid hallway</h1>
+        <h1 class="text-primary" style="font-family: oi; font-weight:400;">kid hallway</h1>
         <div class="nav">
-            <a href="./about.html">about</a>
-            <a href="./finished_projects.html">done</a>
-            <a href="./oops.html">contact me</a>
+            <a href="./about.html">About</a>
+            <a href="./finished_projects.html">Done</a>
+            <a href="./oops.html">Contact Me</a>
 
         </div>
     </div>
@@ -19,12 +23,16 @@
         .nav{
             display: flex;
             flex-direction: column;
-
+            font-size: 1.5rem;
+            font-family:chimp;
+            padding: .25rem;
         }
 
         .nav a{
             color: var(--theme-accent);
             text-decoration: none;
+            padding:2px;
+            border-radius: 1em;
         }
 
         .nav a:hover {
