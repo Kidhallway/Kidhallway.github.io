@@ -4,13 +4,33 @@
     <title>Kid Hallway</title>
 </head>
 <body>
-    <div class="flex-col justify-center align-center">
+    <div class="flex-col justify-center align-center w-dvw h-dvh">
         <img src="NightmareVance.webp" class="pfp">
-        <h1>kid hallway</h1>
-        <a>about</a>
-        <a>done</a>
-        <a>not done</a>
-        <a></a>
+        <h1 class="text-primary">kid hallway</h1>
+        <div class="nav">
+            <a href="./about.html">about</a>
+            <a href="./finished_projects.html">done</a>
+            <a href="./oops.html">contact me</a>
+
+        </div>
     </div>
+
+    <style>
+        .nav{
+            display: flex;
+            flex-direction: column;
+
+        }
+
+        .nav a{
+            color: var(--theme-accent);
+            text-decoration: none;
+        }
+
+        .nav a:hover {
+            color: var(--them-accent-content);
+            background: var(--theme-accent);
+        }
+    </style>
 </body>
 </html>

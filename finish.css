@@ -13,7 +13,7 @@
 }
 
 .header {
-    background-color: #271c3f; color: antiquewhite; justify-content: center ; padding: 2rem;
+    background-color: #2DD881; color: antiquewhite; justify-content: center ; padding: 2rem;
 }
 
 .content {
@@ -21,7 +21,7 @@
 }
 
 .nav-panel {
-    background-color: #57486a; width:15%; font-size: x-large; color:antiquewhite; padding-top: 2rem; padding-bottom: 2rem;
+    background-color: #6FEDB7; width:15%; font-size: x-large; color:antiquewhite; padding-top: 2rem; padding-bottom: 2rem;
 }
 .grow {
     flex-grow:1;
@@ -40,6 +40,6 @@
  height: 100dvh;
 } 
 
-.nav-panel a:hover {background-color:#2C2344; padding-left: 1rem;}
+.nav-panel a:hover {background-color:#140D4F; padding-left: 1rem; color: #2DD881 }
 
 
