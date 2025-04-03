@@ -102,3 +102,29 @@
   .h-dvh {
     height: 100dvh;
   }
+
+  .oi-regular {
+    font-family: "Oi", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .nav{
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    font-family:chimp;
+    padding: .25rem;
+}
+
+.nav a{
+    color: var(--theme-accent);
+    text-decoration: none;
+    padding:2px;
+    border-radius: 1em;
+}
+
+.nav a:hover {
+    color: var(--theme-accent-content);
+    background: var(--theme-accent);
+}
+  
