@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="./portfolio.css">
+        <title>Example</title>
+    </head>
+    <body>
+        <h1>My projects.</h1>
+        <div class=" flex-col justify-center align-center w-dvw h-dvh">
+        <div class="projects">
+            <a class="project" href="https://Kidhallway.github.io/Suppository-example">
+            <span class="project-title">Example</span>
+            <span class="project-description">this is an example project</span>
+            </a>
+        </div>
+        </div><style>
+            .projects {
+                display:flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .project{
+                display: flex;
+                flex-direction: column;
+                max-width: 300px;
+                background: var(--theme-primary);
+                border-radius: 1em;
+                padding: 1em;
+                text-decoration: none;
+            }
+            .project-title {
+                color: var(--theme-primary-content);
+                font-size: 1em;
+                text-align: center;
+                font-style: italic;
+            }
+            .project-description {
+                font-size: 1em;
+                text-align: center;
+                font-style: italic;
+            }
+            .project:hover, .project:hover * {
+                background: var(--theme-secondary) ;
+                color: var(--theme-secondary-content);
+            }
+        </style>
+    </body>
+</html>
