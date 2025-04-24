@@ -1,0 +1,159 @@
+<html>
+    <body style="background-color: black;"></body>
+    <script>        
+        const room1           = 'room1'
+        const room1start      = 'room1start'
+        const room1desk       = 'room1desk'
+        const room1mirror     = 'room1mirror'
+        const room1bed        = 'room1bed'
+        const room1deskdrawer = 'room1deskdrawer'
+        const hawktuah        = 'hawktuah'
+        const room2north      = 'room2north'
+        const room2south      = 'room2south'
+        const room2east       = 'room2east'
+        const room2           = 'room2'
+
+        let riddle = 1
+        let amulet = 1
+        let scene = room1start
+        let choice;
+        let inventory = []
+        let gameOver = false
+    
+        alert('Welcome to Jungahar')
+        let playerName = prompt('what is your name?') 
+        alert(`Hi ${playerName}`)
+
+        while(!gameOver) {
+            while(scene == room1start) {
+                choice = prompt('You find yourself in a void. around you lies the bed you woke up on, a mirror, and a desk. What do you do?')
+                if(choice.toLowerCase().includes('mirror')){
+                    scene = room1mirror
+                }
+                if(choice.toLowerCase().includes('bed')){
+                    scene = room1bed
+                }
+                if(choice.toLowerCase().includes('desk')){
+                    scene = room1desk
+                }
+                if(choice.toLowerCase().includes('tuah')){
+                    scene = hawktuah
+                }
+            }
+            while(scene == room1mirror) {
+                if(inventory.includes("Key") && ("Gem")) {
+                    choice = prompt ("The mirror doesn't look real, almost like you can walk through it. However, if you chose to walk through, theres no coming back. Do you enter?")
+                        if(choice.toLowerCase().includes('back')){
+                        scene = room1start
+                }   else if(choice.toLowerCase().includes('enter','yes','go','walk','through')){
+                        scene = room2
+                    }
+                } else {
+                    choice = prompt ("You aproach the mirror, but it feels like you are missing something. What do you do?")
+                    if(choice.toLowerCase().includes('back')) {
+                        scene = room1start
+                    }
+                
+                }
+            }
+            while(scene == room1desk) {
+                while(!inventory.includes("Gem")) {
+                    choice = prompt('you aproach the desk. On it lies a gem. The desk also has a drawer. what do you do')
+                    if(choice.toLowerCase().includes('back')) {
+                        scene = room1start
+                    } else if(choice.toLowerCase().includes('gem')) {
+                        alert('You grab the gem')
+                        inventory.push("Gem")
+                    }
+                }
+
+                choice = prompt('You aproach the desk. It has nothing on top. The desk has a drawer. What do you do')
+
+                if(choice.toLowerCase().includes('back')){
+                    scene = room1start
+                } else if(choice.toLowerCase().includes('drawer')){
+                    alert ('You open the drawer, and find a key. You pick it up')
+                    inventory.push("Key")
+                }
+            }
+
+            while(scene == room1bed) {
+                alert('You lay back down, and vines wrap around you forcing you to spend eternity in bed. Game Over.')
+                gameOver = true
+                scene = null
+            }
+        
+            while(scene == hawktuah){
+                alert('Your heart is ripped out of your chest, seemingly by nothing. if your skin werent peeling you might have caught it. as you try to hold your decaying body together, your eyes fall out, and every sense you once had dissapears. it is you and your thoughts. Game Over')
+                gameOver = true
+                scene = null
+        }
+        while(scene == room2){
+            let choice = prompt('You find yourself in the bottom layer of the jungle. aruond you are trees. lots of trees. three trees stand out. A gnarled oak tree to your east. A strong redwood tree to your north. And lastly, a pine tree to your south.')
+        if(choice.toLowerCase().includes('Pine') || (choice.toLowerCase().includes('south'))){
+            scene = room2south
+        }
+        if(choice.toLowerCase().includes('Redwood') || (choice.toLowerCase().includes('north'))){
+            scene = room2north
+        }
+        if(choice.toLowerCase().includes('oak') || (choice.toLowerCase().includes('east'))){
+            scene = room2east
+        }
+        while(scene == room2south && !riddle == 0){
+            choice = prompt("You aproach the pine tree. But it doesnt look like a pine. to be quite frank, it looks like its plastic. Theres a hole in facing you, but it isnt quite a woodpecker's doing. what do you do?")
+                while(choice.toLowerCase().includes('key')){
+                    inventory.splice(inventory.indexOf("key"), 1)
+                    while (riddle == 1) {alert("you put the key in the hole and turn. Miraculously, it works! however, as you open the door you see a riddle await you.")
+                    choice = prompt('The riddle reads "What has roots as nobody sees, Is taller than trees Up, up it goes, And yet never grows?"')
+                        if (choice.toLowerCase().includes('mountain')) {
+                            riddle = 2
+                        }
+                    }
+                    while (riddle == 2) {alert("The text changes, and you move on to riddle number 2.")
+                    choice = prompt('The riddle reads "The more there is in a forest, the less you can see. What am I?"')
+                        if (choice.toLowerCase().includes('darkness')) {
+                            riddle = 3
+                        }
+                    }
+                    while (riddle == 3) {alert("The text changes, and you move on to riddle number 3,")
+                    choice = prompt('The riddle reads "What can pass through a tree, without rustling any leaves?"')
+                        if (choice.toLowerCase().includes('light')) {
+                            riddle = 0
+                        }
+                    }
+
+                    }
+                    if (scene = room2south && riddle == 0) {
+                        alert('There are no more riddles. The tree closes, and the tree has no more use.')
+                        scene = room2
+                }  
+                }
+                
+        }
+        if(scene == room2north){
+            alert('You aproach the redwood. as you gaze upon the possible riddle, a little goblin comes by and gives you a wet willy. He then gives you an indian rugburn and spits in your direction. probably best to avoid him')
+            scene = room2
+        }
+        while(scene == room2east){
+            if (riddle == 1) {
+                alert('You aproach the Oak tree. as you gaze upon the branches, you see a small door. it doesnt lead anywhere and its too small to reach anything into. You head back')
+                scene = room2
+            } else if (riddle == 2) {
+                alert('You aproach the Oak tree. as you gaze upon the branches, you see a small door. it is a little bigger than before, but only because now. You head back')
+                scene = room2
+            } else if (riddle == 3) {
+                alert('You aproach the Oak tree. as you gaze upon the branches, you see a a medium door, only enough to crouch through, but it doesnt lead anywhere yet. You head back')
+                scene = room2
+            } else if (riddle == 0) {
+                prompt('You aproach the Oak tree. as you gaze upon the branches, you see a door. It miraculously leads somewhere, despite not having anything behind it. Do you dare enter?')
+                if(choice.toLowerCase().includes('enter','yes','go','walk','through')){
+                    alert('It doesnt matter, as you get sucked into the door. The gem in your pocket glows, as you lift it up to examine it. A familiar green fist comes out of it and knocks your jaw to the side. you pass out on the floor and wont wake up for a long time. The End.')
+                    gameOver = true
+                    scene=room1
+                }
+            }
+        }
+    }
+        
+    </script>
+</html>

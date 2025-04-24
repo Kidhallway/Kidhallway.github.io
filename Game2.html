@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+    <title>
+        Game
+    </title>
+    <body>
+    <script src="https://mister-mcgee.github.io/js/hg.js"></script>
+    <script>
+        const stage = hg.Stage({
+        w: 256,
+        h: 256,
+        debug: "paint",
+        lbg:"#000010",
+        scaleIncrement: 1
+      })
+
+      class Player {
+        constructor() {
+          this.sprite = hg.Sprite.fromCache(hg.CACHE, "Atlas", 10, 10, [5])
+          this.x = 0
+          this.y = 0
+          this.w = 16
+          this.h = 16
+          this.vx = 0
+          this.vy = 0
+          hg.Sprite.loop(this.sprite, 8)
+        }
+        draw(context) {
+          hg.Sprite.tick(context, this.sprite                )
+          hg.Sprite.draw(context, this.sprite, this.x, this.y)
+        }
+
+        intersects(other) {
+        return(other &&
+            this.x + this.w > other.x && this.x < other.x +other.w &&
+            this.y + this.h > other.y && this.y < other.y +other.h
+        )
+      }
+
+      collideWith(other) {
+        if(this.intersects(other)) {
+            this.y = other.y - this.h
+            this.vy = 0
+        }
+      }
+    }
+    class Tile {
+        constructor() {
+            this.sprite = hg.Sprite.fromCache(hg.CACHE, "Atlas", 10, 10, [1, 2, 3, 4, 11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34])
+            this.x=0
+            this.y=0
+            this.w=16
+            this.h=16
+            this.sprite.frame = Math.random() * this.sprite.frames.length
+        }
+        draw(context) {
+            hg.Sprite.tick(context, this.sprite)
+            hg.Sprite.draw(context,this.sprite, this.x, this.y)
+        }
+    }
+
+      class Grid {
+        constructor(w, h) {
+            this.tiles = new Array(w * h)
+            this.w = w
+            this.h = h
+            this.atlas = hg.Atlas.fromCache(hg.CACHE,"Atlas", 10, 10)
+
+        }
+        at(i,j) {
+            return j * this.w + i
+        }
+
+        inBounds(i,j) {
+            return (
+                i >= 0 && i < this.w &&
+                j >= 0 && j < this.h
+            )
+        }
+
+        getTileAt(i,j) {
+            return this.inBounds(i,j) ? this.tiles[this.at(i,j)] : null
+        }
+
+        putTileAt(i,j, tile) {
+            if(this.inBounds(i,j))
+            this.tiles[this.at(i,j)] = tile
+        }
+
+        draw(context) {
+            for (let i = 0; i <this.w; i++)
+                for (let j = 0; j <this.h; j++)
+                    hg.Atlas.draw(context, this.atlas, 10, i*16, j*16)
+
+
+            for(const tile of this.tiles)
+            if(tile) tile.draw(context)
+        }
+    }
+
+      const scene = {
+        onAttach(stage) {
+            this.grid = new Grid(16,16)
+                for(let i = 0; i < Grid.w; i ++)    
+            if(Math.random() <= .25)
+                this.grid.putTileAt (i, 7, tile)
+            else
+                grid.push(undefined)
+
+            
+
+            this.player = new Player()
+            this.player.x = (this.grid.w *16 - this.player.w)/2
+            this.player.y = (this.grid.h *16 - this.player.h)/2
+
+            this.atlas = hg.Atlas.fromCache(hg.CACHE, "Atlas", 10, 10)
+
+            
+        },
+
+        onUpdate(context) {
+            const l = hg.Input.isKeyDown(context.input, "a" ) ? -1 : 0
+            const r = hg.Input.isKeyDown(context.input, "d") ? 1 : 0
+            this.player.vx = (l+r) * 100
+            const u = hg.Input.isKeyDown(context.input, "w"   ) ? -1 : 0
+            const d = hg.Input.isKeyDown(context.input, "s" ) ? 1 : 0
+            this.player.vy = (u+d) * 100
+            this.player.x += this.player.vx * context.dt
+            this.player.y += this.player.vy * context.dt
+            for(const tiles of this.grid.tiles) {
+                this.player.collideWith(tiles)
+            }
+
+            const mouse = hg.Input.getMouse(context.input)
+            const virtual = hg.Stage.getVirtualSize(context.stage)
+
+            if(
+                hg.x(mouse) >= 0 && hg.x(mouse) < hg.x(virtual) &&
+                hg.y(mouse) >= 0 && hg.y(mouse) < hg.y(virtual)
+            ) {
+                stage.logicalCanvasElement.style.cursor = "none"
+            } else {
+                stage.logicalCanvasElement.style.cursor = "auto"
+            }
+        },
+
+        onRender(context) {
+            this.grid.draw(context)
+            this.player.draw(context)
+            let mouse = hg.Input.getMouse(context.input)
+            hg.Atlas.draw(context, this.atlas, 7, hg.x(mouse) - 8, hg.y(mouse) - 8)
+
+            let angle = Math.atan2(
+                hg.y(mouse) - this.player.y - 8,
+                hg.x(mouse) - this.player.x - 8
+            )
+
+            context.g.translate( 
+                this.player.x + 8 + Math.cos(angle) * 23,  
+                this.player.y + 8 + Math.sin(angle) * 23
+            )
+            context.g.rotate( angle + (45 * Math.PI / 180)) 
+                hg.Atlas.draw(context, this.atlas, 8, -8, -8)
+            context.g.rotate(-angle - (45 * Math.PI / 180))
+            context.g.translate(
+                -this.player.x - 8 - Math.cos(angle) * 23, 
+                -this.player.y - 8 - Math.sin(angle) * 23
+            )
+        },
+        
+        onKeyDown(input, event) {
+            
+    if(event.key === " " && this.player.onGround) {
+        this.player.onGround = false
+        this.player.vy= -100 
+        }
+    }
+        }
+      hg.mount({ stage, scene }, [
+        hg.Asset.Image("./Sprite_Atlas.png", "Atlas")
+      ])
+
+    </script>
+    </body>
+</html>
