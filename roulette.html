@@ -8,13 +8,20 @@
             <button id="button" type="button">
                 Good Luck!
             </button>
+<h1>Score:</h1>
+<h1 id="score">0</h1>
         </h1>
         </div>
         <script> 
             const btn = document.getElementById("button")
             btn.onclick =() => {
             console.log("hello")
+            let goal = document.getElementById('score');
+            let score = 0
             if(Math.random() <= .25){
+                score = 0
+                goal.textContent = (score)
+                console.log(score)
                 console.log("badluck")
                 document.getElementById("background").style.backgroundColor="Red"
                 setTimeout(function(){
@@ -25,12 +32,16 @@
             } else {
                 console.log("goodluck")
                 document.getElementById("background").style.backgroundColor="limeGreen"
+                score = score + 1
+                goal.textContent = (score)
+                console.log(score)
                 setTimeout(function(){
                 document.getElementById("background").style.backgroundColor="white"
                 }, 2000);
 
             }
             }
+
             </script>
     </body>
 </html>
