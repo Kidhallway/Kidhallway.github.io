@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+        <body style="display: block;margin: 8px;" id="background">
+           <h1 style="font-size: 76px;line-height: 76px;height: 76px;font-family: Helvetica, sans-serif;font-weight: bold;position: fixed;top: 50%;margin-top: -38px;width: 100%;text-align: center;">
+            <button id="button" type="button">
+                Good Luck!
+            </button>
+        </body>
+        <script>
+            let body = document.getElementById("background")
+            let win
+            const btn = document.getElementById("button")
+            btn.onclick =() => {
+            if(Math.floor(Math.random() * 34000000 + 1) == 1) {
+                Body.color = "green"
+                console.log("win")
+            }else{
+                body.color = "red"
+                console.log("lose")
+            }
+        }
+        </script>
+    </html>

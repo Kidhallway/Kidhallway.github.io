@@ -14,11 +14,11 @@
         </div>
         <script> 
             const btn = document.getElementById("button")
+            let score = 0
             btn.onclick =() => {
             console.log("hello")
             let goal = document.getElementById('score');
-            let score = 0
-            if(Math.random() <= .25){
+            if(Math.random() <= 0){
                 score = 0
                 goal.textContent = (score)
                 console.log(score)
