@@ -13,7 +13,7 @@
     --theme-accent-content   : #C62E65;
     --theme-surface-content  : #F9B3D1;
   
-    /* background: var(--theme-surface        ); */
+    /* background: var(--theme-surface); */
     color: var(--theme-surface-content);
   }
   
@@ -96,7 +96,7 @@
   }
   
   .w-dvw {
-    width: 100dvw;
+    width: 100%;
   }
 
   .h-dvh {

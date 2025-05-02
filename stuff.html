@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.min.js"></script>
+    <link rel="stylesheet" href="./portfolio.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=w-dvw, initial-scale=1.0" />
+  <title>Bouncing Image</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;align-content: center;justify-content: center;
+    }
+  </style>
+</head>
+<body>
+<p class="flex-col justify-center align-center w-dvw" style="width: 500px;">
+  To start out with the project of making an element bounce around a canvas, i had remembered the projects i had made earlier this year. We had used an aplication called P5.Js. this is relevant because i had remembered that Mr.Mcgee had said we could transfer it to javascript. So to put something down i had coppied down my previous project onto this page. however, because of how p5 is written, it would not work without a script. To fix this i consulted a friend of mine with a piece of code to turn p5 into javascript. this piece of script saved me so much hassle.
+</p>
+</body>
+<script>
+function setup() {
+  createCanvas(600, 500);
+
+}
+    let x = 250
+    let y = 250
+    let vx = 4
+    let vy = 4
+function draw() {
+  background(220);
+  smile(x,y)
+  x = x + vx
+  y = y + vy
+  if (x<32) {
+    vx = vx *-1
+  }
+  if(y<32){
+  vy = vy * -1.
+  }
+  if (x > 568) {
+    vx = vx *-1
+  }
+  if (y > 468) {
+    vy = vy * -1
+  }
+}
+function smile(x, y, s=1) {
+  translate(x, y)
+  scale(s)
+  
+  fill("orange")
+  circle(0, 0, 64)
+  
+  fill("black")
+  circle(- 15, - 5, 8)
+  circle(+ 15, - 5, 8)
+  
+  noFill()
+  strokeWeight(4)
+    arc(0, 0, 44, 44, PI/8, 7*PI/8)
+  
+  scale(1/s)
+  translate(-x, -y)
+}
+</script>
+</html>

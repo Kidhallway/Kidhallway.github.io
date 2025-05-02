@@ -17,10 +17,10 @@
       class Player {
         constructor() {
           this.sprite = hg.Sprite.fromCache(hg.CACHE, "Atlas", 10, 10, [5])
-          this.x = 0
-          this.y = 0
-          this.w = 16
-          this.h = 16
+          this.x  = 0
+          this.y  = 0
+          this.w  = 16
+          this.h  = 16
           this.vx = 0
           this.vy = 0
           hg.Sprite.loop(this.sprite, 8)
@@ -91,8 +91,6 @@
             for (let i = 0; i <this.w; i++)
                 for (let j = 0; j <this.h; j++)
                     hg.Atlas.draw(context, this.atlas, 10, i*16, j*16)
-
-
             for(const tile of this.tiles)
             if(tile) tile.draw(context)
         }
@@ -106,24 +104,18 @@
                 this.grid.putTileAt (i, 7, tile)
             else
                 grid.push(undefined)
-
-            
-
             this.player = new Player()
             this.player.x = (this.grid.w *16 - this.player.w)/2
             this.player.y = (this.grid.h *16 - this.player.h)/2
-
             this.atlas = hg.Atlas.fromCache(hg.CACHE, "Atlas", 10, 10)
-
-            
         },
 
         onUpdate(context) {
             const l = hg.Input.isKeyDown(context.input, "a" ) ? -1 : 0
-            const r = hg.Input.isKeyDown(context.input, "d") ? 1 : 0
+            const r = hg.Input.isKeyDown(context.input, "d" ) ?  1 : 0
             this.player.vx = (l+r) * 100
-            const u = hg.Input.isKeyDown(context.input, "w"   ) ? -1 : 0
-            const d = hg.Input.isKeyDown(context.input, "s" ) ? 1 : 0
+            const u = hg.Input.isKeyDown(context.input, "w" ) ? -1 : 0
+            const d = hg.Input.isKeyDown(context.input, "s" ) ?  1 : 0
             this.player.vy = (u+d) * 100
             this.player.x += this.player.vx * context.dt
             this.player.y += this.player.vy * context.dt
@@ -131,7 +123,7 @@
                 this.player.collideWith(tiles)
             }
 
-            const mouse = hg.Input.getMouse(context.input)
+            const mouse   = hg.Input.getMouse(context.input)
             const virtual = hg.Stage.getVirtualSize(context.stage)
 
             if(
@@ -144,8 +136,38 @@
             }
         },
 
+        
         onRender(context) {
-            this.grid.draw(context)
+            let qw = 1
+            if(qw==1){
+
+                //texture of cursor
+                this.grid.draw(context)
+            this.player.draw(context)
+            let mouse = hg.Input.getMouse(context.input)
+            hg.Atlas.draw(context, this.atlas, 7, hg.x(mouse) - 8, hg.y(mouse) - 1)
+
+            //sword swing center
+            let angle = Math.atan2(
+                hg.y(mouse) - this.player.y - 8,
+                hg.x(mouse) - this.player.x - 8    
+            )
+
+            context.g.translate( 
+                //sword swing width and height
+                this.player.x + 8 + Math.cos(angle) * 23,  
+                this.player.y + 8 + Math.sin(angle) * 23
+            )
+            context.g.rotate( angle + (90 * Math.PI / 180)) 
+            hg.Atlas.draw(    context, this.atlas, 8, -8, -8)
+            context.g.rotate(-angle - (90 * Math.PI / 180))
+            context.g.translate(
+                //return sword for draw
+                -this.player.x - 8 - Math.cos(angle) * 23, 
+                -this.player.y - 8 - Math.sin(angle) * 23
+            )
+            } else if(qw=2){
+                this.grid.draw(context)
             this.player.draw(context)
             let mouse = hg.Input.getMouse(context.input)
             hg.Atlas.draw(context, this.atlas, 7, hg.x(mouse) - 8, hg.y(mouse) - 8)
@@ -159,20 +181,24 @@
                 this.player.x + 8 + Math.cos(angle) * 23,  
                 this.player.y + 8 + Math.sin(angle) * 23
             )
-            context.g.rotate( angle + (45 * Math.PI / 180)) 
-                hg.Atlas.draw(context, this.atlas, 8, -8, -8)
-            context.g.rotate(-angle - (45 * Math.PI / 180))
+            context.g.rotate( angle - (90 * Math.PI / 180)) 
+            hg.Atlas.draw(    context, this.atlas, 8, -8, -8)
+            context.g.rotate(-angle + (90 * Math.PI / 180))
             context.g.translate(
                 -this.player.x - 8 - Math.cos(angle) * 23, 
                 -this.player.y - 8 - Math.sin(angle) * 23
             )
+            }
+            
         },
         
         onKeyDown(input, event) {
-            
     if(event.key === " " && this.player.onGround) {
-        this.player.onGround = false
-        this.player.vy= -100 
+        if(qw==1){
+            qw=2
+        } else if(qw==2) {
+            qw=1
+        }
         }
     }
         }
